@@ -228,3 +228,8 @@ body {
   to {transform: translateY(-300vh);
   opacity: 0;}
 }
+
+@keyframes blow {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}

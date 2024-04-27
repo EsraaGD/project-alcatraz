@@ -15,9 +15,11 @@ navigator.mediaDevices.getUserMedia({ audio: true })
         // Set a threshold for blow detection
         var threshold = 100;
         if (averageVolume > threshold) {
-            // Blow detected, perform action to blow out the candle
-            console.log('Blow detected! Candle blown out.');
-        }
+    // Blow detected, perform action to blow out the candle
+    console.log('Blow detected! Candle blown out.');
+    var flame = document.getElementById('flame');
+    flame.style.animation = 'blowOut 1s forwards';
+}
         // Repeat detection
         requestAnimationFrame(detectBlow);
     }
