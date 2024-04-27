@@ -188,6 +188,7 @@ body {
   width: 105px;
   border-radius: 75% 75% 70% 70%;
   position: relative;
+ z-index: -1;
 }
 
 .balloon:before {
