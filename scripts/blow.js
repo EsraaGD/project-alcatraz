@@ -1,9 +1,7 @@
-// Define a function to create or resume the AudioContext
+// Function to initialize the AudioContext
 function initializeAudioContext() {
-    // Check if AudioContext is supported
     if (window.AudioContext || window.webkitAudioContext) {
-        var audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        return audioContext;
+        return new (window.AudioContext || window.webkitAudioContext)();
     } else {
         console.error('AudioContext is not supported in this browser.');
         return null;
@@ -11,17 +9,27 @@ function initializeAudioContext() {
 }
 
 // Function to start the blow detection
-function startBlowDetection() {
-    // Initialize the AudioContext
+function startBlowDetection(threshold) {
     var audioContext = initializeAudioContext();
     if (audioContext) {
-        // Request access to the user's microphone
         navigator.mediaDevices.getUserMedia({ audio: true })
             .then(function (stream) {
                 var source = audioContext.createMediaStreamSource(stream);
                 var analyser = audioContext.createAnalyser();
                 source.connect(analyser);
-                // Continue with blow detection code...
+                var bufferLength = analyser.frequencyBinCount;
+                var dataArray = new Uint8Array(bufferLength);
+                function detectBlow() {
+                    analyser.getByteFrequencyData(dataArray);
+                    var averageVolume = dataArray.reduce(function (acc, val) { return acc + val; }, 0) / bufferLength;
+                    if (averageVolume > threshold) {
+                        console.log('Blow detected! Candle blown out.');
+                        var flame = document.getElementById('flame');
+                        flame.style.animation = 'blowout 1s forwards';
+                    }
+                    requestAnimationFrame(detectBlow);
+                }
+                detectBlow();
             })
             .catch(function (error) {
                 console.error('Error accessing microphone:', error);
@@ -30,4 +38,9 @@ function startBlowDetection() {
 }
 
 // Event listener for user gesture (e.g., button click)
-document.getElementById('startButton').addEventListener('click', startBlowDetection);
+document.getElementById('startButton').addEventListener('click', function() {
+    // Specify the threshold for blow detection
+    var threshold = 50;
+    // Start blow detection with the specified threshold
+    startBlowDetection(threshold);
+});
