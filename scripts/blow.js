@@ -53,7 +53,7 @@ function startBlowDetection(threshold) {
 document.getElementById('startButton').addEventListener('click', function() {
     console.log('Button pressed.'); // Debugging: Log button press
     // Specify the threshold for blow detection
-    const threshold = 40;
+    const threshold = 20;
     console.log('Starting blow detection with threshold:', threshold); // Debugging: Log threshold
     // Start blow detection with the specified threshold
     startBlowDetection(threshold);
