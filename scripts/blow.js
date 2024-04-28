@@ -10,28 +10,40 @@ function initializeAudioContext() {
 
 // Function to start the blow detection
 function startBlowDetection(threshold) {
-    var audioContext = initializeAudioContext();
+    const audioContext = initializeAudioContext();
     if (audioContext) {
         navigator.mediaDevices.getUserMedia({ audio: true })
-            .then(function (stream) {
-                var source = audioContext.createMediaStreamSource(stream);
-                var analyser = audioContext.createAnalyser();
+            .then((stream) => {
+                const source = audioContext.createMediaStreamSource(stream);
+                const analyser = audioContext.createAnalyser();
                 source.connect(analyser);
-                var bufferLength = analyser.frequencyBinCount;
-                var dataArray = new Uint8Array(bufferLength);
+
+                // Analyze audio data
+                const bufferLength = analyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+
                 function detectBlow() {
                     analyser.getByteFrequencyData(dataArray);
-                    var averageVolume = dataArray.reduce(function (acc, val) { return acc + val; }, 0) / bufferLength;
+
+                    // Calculate average volume
+                    const averageVolume = dataArray.reduce((acc, val) => acc + val, 0) / bufferLength;
+
+                    console.log('Average Volume:', averageVolume); // Debugging: Log average volume
+
                     if (averageVolume > threshold) {
                         console.log('Blow detected! Candle blown out.');
-                        var flame = document.getElementById('flame');
-                        flame.style.animation = 'blowout 1s forwards';
+                        const flame = document.getElementById('flame');
+                        flame.style.animation = 'blowout 5s forwards'; // Apply blowout animation
                     }
+
+                    // Repeat detection
                     requestAnimationFrame(detectBlow);
                 }
+
+                // Start detecting blow
                 detectBlow();
             })
-            .catch(function (error) {
+            .catch((error) => {
                 console.error('Error accessing microphone:', error);
             });
     }
@@ -39,8 +51,10 @@ function startBlowDetection(threshold) {
 
 // Event listener for user gesture (e.g., button click)
 document.getElementById('startButton').addEventListener('click', function() {
+    console.log('Button pressed.'); // Debugging: Log button press
     // Specify the threshold for blow detection
-    var threshold = 50;
+    const threshold = 40;
+    console.log('Starting blow detection with threshold:', threshold); // Debugging: Log threshold
     // Start blow detection with the specified threshold
     startBlowDetection(threshold);
 });
